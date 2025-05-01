@@ -1,0 +1,59 @@
+import { useState } from "react";
+import { useEvent } from "react-use";
+import { VscodeSplitLayout } from "@vscode-elements/react-elements";
+
+import { Message } from "./type/Message";
+import ChatView from "./components/ChatView";
+
+function App() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      type: "say",
+      content: "Please input rootPath you want to search.",
+      time: Date.now(),
+    },
+  ]);
+  useEvent("message", (event: MessageEvent) => {
+    const originalMessage =
+      typeof event.data === "string" ? event.data : event.data.toString();
+    console.log(originalMessage);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let parsedMessage: any;
+    try {
+      if (typeof originalMessage === "string")
+        parsedMessage = JSON.parse(originalMessage);
+      else if (typeof originalMessage === "object")
+        parsedMessage = originalMessage;
+      else parsedMessage = JSON.parse(originalMessage);
+    } catch (e) {
+      console.error(e);
+      parsedMessage = {};
+    }
+    const type = parsedMessage?.type;
+    switch (type) {
+      case "ask":
+        break;
+      case "say":
+        break;
+      case "state":
+        setMessages(parsedMessage.state);
+        break;
+      default:
+        break;
+    }
+  });
+  return (
+    <div>
+      <VscodeSplitLayout
+        initialHandlePosition="40%"
+        onVscSplitLayoutChange={(event) => {
+          console.log(event);
+        }}
+      >
+        <ChatView setMessages={setMessages} messages={messages} />
+      </VscodeSplitLayout>
+    </div>
+  );
+}
+
+export default App;
