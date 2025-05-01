@@ -12,6 +12,7 @@ import { vscode } from "../utils/vscode";
 type ChatViewType = {
   messages: Message[];
   setMessages: Dispatch<SetStateAction<Message[]>>;
+  setIsSettingsPage: Dispatch<SetStateAction<boolean>>;
 };
 
 const initialConfigPrimaryButtons = [
@@ -20,7 +21,7 @@ const initialConfigPrimaryButtons = [
   "Send purpose",
 ];
 
-const ChatView: React.FC<ChatViewType> = ({ messages, setMessages }) => {
+const ChatView: React.FC<ChatViewType> = ({ messages, setMessages, setIsSettingsPage }) => {
   const [rootPath, setRootPath] = useState<string>("");
   const [rootFunctionName, setRootFunctionName] = useState<string>("");
   const [purpose, setPurpose] = useState<string>("");
@@ -63,6 +64,22 @@ purpose: ${purpose}`
       setPrimaryButtonText(initialConfigPrimaryButtons[1]);
       return;
     }
+    if (secondaryButtonText === "Reset") {
+      vscode.postMessage({
+        type: "Reset"
+      });
+      setMessages([
+        {
+          type: "say",
+          content: "Please input rootPath you want to search.",
+          time: Date.now(),
+        },
+      ]);
+      setRootPath("");
+      setRootFunctionName("");
+      setPurpose("");
+      return;
+    }
   };
   const handlePrimaryButtonClick = () => {
     if (initialConfigPrimaryButtons.includes(primaryButtonText)) {
@@ -71,22 +88,22 @@ purpose: ${purpose}`
     }
     if (primaryButtonText === "Start Task") {
       vscode.postMessage(
-        JSON.stringify({
+        {
           type: "Init",
           rootPath,
           rootFunctionName,
           purpose,
-        })
+        }
       );
       setPrimaryButtonText("")
     }
     if (primaryButtonText === "Response") {
       if (!inputText.trim()) return;
       vscode.postMessage(
-        JSON.stringify({
+        {
           type: "Ask",
           askResponse: inputText.trim(),
-        })
+        }
       );
       setPrimaryButtonText("")
     }
@@ -144,6 +161,7 @@ purpose: ${purpose}`
   useEffect(() => {
     if (lastMessage.type === "ask") {
       setPrimaryButtonText("Response");
+      setSecondaryButtonText("Reset");
       const messagesContainer = document.getElementById("messages");
       messagesContainer?.lastElementChild?.scrollIntoView({block: "end", behavior: "smooth"})
     }
@@ -151,11 +169,11 @@ purpose: ${purpose}`
   return (
     <div
       style={{
-        width: "450px",
-        height: "calc(100vh - 220px)",
-        backgroundColor: "black",
+        width: "350px",
+        height: "95vh",
         overflow: "scroll",
         position: "relative",
+        borderRight: "1px solid black",
       }}
       id="container"
     >
@@ -165,32 +183,38 @@ purpose: ${purpose}`
           backgroundColor: "white",
           padding: "10px",
           borderRadius: "10px",
-          width: "410px",
+          width: "310px",
           margin: "10px 10px",
           position: "fixed",
           top: "0px",
           left: "0px",
-          whiteSpace: "break-spaces"
+          whiteSpace: "break-spaces",
+          overflow: "scroll"
         }}
       >
-        <p>{task}</p>
+        <p style={{color: "black"}}>
+          {task}
+          <hr/>
+          If you have not set API KEY, Please set it
+          <br/>
+          <VscodeButton onClick={() => setIsSettingsPage(true)}>Here</VscodeButton>
+        </p>
       </div>
       <div
         id="messages"
         style={{
-          width: "410px",
+          width: "310px",
           padding: "10px",
           margin: "50px 0 50px",
-          height: "calc(100vh - 450px)",
+          height: "calc(100vh - 220px)",
         }}
       >
         <div
             style={{
-            backgroundColor: "black",
             padding: "10px",
             margin: "10px 0",
             height: "50px",
-            width: "410px",
+            width: "310px",
           }}
         >
         </div>
@@ -204,7 +228,8 @@ purpose: ${purpose}`
                 padding: "10px",
                 margin: "10px 0",
                 whiteSpace: "break-spaces",
-                width: "410px",
+                width: "310px",
+                color: "black"
               }}
             >
               {message.content}
@@ -218,7 +243,8 @@ purpose: ${purpose}`
                 padding: "10px",
                 margin: "10px 0",
                 whiteSpace: "break-spaces",
-                width: "410px",
+                width: "310px",
+                color: "black"
               }}
             >
               {message.content}
@@ -227,11 +253,10 @@ purpose: ${purpose}`
         )}
         <div
             style={{
-            backgroundColor: "black",
             padding: "10px",
             margin: "10px 0",
             height: "100px",
-            width: "410px",
+            width: "310px",
           }}
         >
         </div>
@@ -241,16 +266,15 @@ purpose: ${purpose}`
           position: "fixed",
           bottom: "10px",
           left: "10px",
+          backgroundColor: "#00000070"
         }}
       >
         <VscodeTextfield
           value={inputText}
           onChange={(e) => setInputText((e?.target as HTMLTextAreaElement)?.value || "")}
-          style={{
-            width: "410px",
-          }}
           min={3}
         />
+        <br/>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <VscodeButton
             disabled={!secondaryButtonText}

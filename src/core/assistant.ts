@@ -10,7 +10,7 @@ import { Message, MessageType } from "./type/Message";
 import { AskResponse } from "./type/Response";
 import pWaitFor from "p-wait-for";
 
-const saveDataFolder = "/Users/coffeecup/Desktop/sandbox/readCodeAssistant"
+const saveDataFolder = "~/Desktop"
 
 export class ReadCodeAssistant {
     private apiHandler: AnthropicHandler;

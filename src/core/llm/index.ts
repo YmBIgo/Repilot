@@ -7,7 +7,7 @@ export class AnthropicHandler {
     private model: string
     private saveLlmHistoryFolder: string;
     constructor(apiKey: string, saveLlmHistoryFolder: string = "") {
-        this.client = new Anthropic({apiKey})
+        this.client = new Anthropic({apiKey});
         this.attemptCount = 0
         this.model = "claude-3-5-sonnet-20241022" // claude-3-7-sonnet-20250219 / claude-3-5-sonnet-20241022
         this.saveLlmHistoryFolder = saveLlmHistoryFolder

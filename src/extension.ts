@@ -14,10 +14,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	outputChannel.appendLine("Repilot extension activated");
 
-	const sidebarProvider = new ReadCodeAssistantProvider(context);
+	// const sidebarProvider = new ReadCodeAssistantProvider(context);
+	const tabProvider = new ReadCodeAssistantProvider(context);
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(ReadCodeAssistantProvider.viewType, sidebarProvider, {
+		vscode.window.registerWebviewViewProvider(ReadCodeAssistantProvider.viewType, tabProvider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		})
 	);
@@ -33,12 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand("repilot.settingsButtonTapped", () => {
 			//const message = "claude-dev.settingsButtonTapped!"
 			//vscode.window.showInformationMessage(message)
-			sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonTapped" })
+			tabProvider.postMessageToWebview({ type: "action", action: "settingsButtonTapped" })
 		})
 	);
 
 	const openReadCodeAssistantInNewTab = () => {
-		const tabProvider = new ReadCodeAssistantProvider(context);
 		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 		const targetCol = Math.max(lastCol + 1, 1)
 		const panel = vscode.window.createWebviewPanel(ReadCodeAssistantProvider.viewType, "Read Code Assistant", targetCol, {

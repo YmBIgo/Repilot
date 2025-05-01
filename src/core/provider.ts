@@ -1,4 +1,4 @@
-import { Uri, Webview } from "vscode"
+import { Uri, Webview } from "vscode";
 import * as vscode from "vscode";
 import pWaitFor from "p-wait-for";
 
@@ -7,10 +7,10 @@ import { ReadCodeAssistant } from "./assistant";
 import { AskResponse } from "./type/Response";
 
 let codeReadingAssistant: ReadCodeAssistant;
+let view: vscode.WebviewView | vscode.WebviewPanel;
 
 export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "repilot.SidebarProvider"
-  private view?: vscode.WebviewView | vscode.WebviewPanel;
+  public static readonly viewType = "repilot.SidebarProvider";
   private gopls: string = "/opt/homebrew/bin/gopls";
   private disposables: vscode.Disposable[] = [];
 
@@ -24,27 +24,28 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
 	- https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
 	*/
 	async dispose() {
-		if (this.view && "dispose" in this.view) {
-			this.view.dispose()
+		if (view && "dispose" in view) {
+			view.dispose();
 		}
 		while (this.disposables.length) {
-			const x = this.disposables.pop()
+			const x = this.disposables.pop();
 			if (x) {
-				x.dispose()
+				x.dispose();
 			}
 		}
 	}
 
   async resolveWebviewView(webviewView: vscode.WebviewView | vscode.WebviewPanel) {
-    this.view = webviewView;
+    view = webviewView;
     webviewView.webview.options = {
         // Allow scripts in the webview
         enableScripts: true,
         localResourceRoots: [this.context.extensionUri],
-    }
-    webviewView.webview.html = this.getHtmlContent(webviewView.webview)
+    };
+    webviewView.webview.html = this.getHtmlContent(webviewView.webview);
 
     this.gopls = await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls";
+    this.init();
     this.setWebviewMessageListener(webviewView.webview);
 
 		// Listen for when the panel becomes visible
@@ -54,35 +55,35 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
 			// panel
 			webviewView.onDidChangeViewState(
 				() => {
-					if (this.view?.visible) {
-						this.view?.webview.postMessage({ type: "action", action: "didBecomeVisible" })
+					if (view?.visible) {
+						view?.webview.postMessage({ type: "action", action: "didBecomeVisible" });
 					}
 				},
 				null,
 				this.disposables
-			)
+			);
 		} else if ("onDidChangeVisibility" in webviewView) {
 			// sidebar
 			webviewView.onDidChangeVisibility(
 				() => {
-					if (this.view?.visible) {
-						this.view?.webview.postMessage({ type: "action", action: "didBecomeVisible" })
+					if (view?.visible) {
+						view?.webview.postMessage({ type: "action", action: "didBecomeVisible" });
 					}
 				},
 				null,
 				this.disposables
-			)
+			);
 		}
 
 		// Listen for when the view is disposed
 		// This happens when the user closes the view or when the view is closed programmatically
 		webviewView.onDidDispose(
 			async () => {
-				await this.dispose()
+				await this.dispose();
 			},
 			null,
 			this.disposables
-		)
+		);
   }
 
   async say(content: string): Promise<void> {
@@ -90,7 +91,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
       type: "say",
       say: content,
     });
-    this.view?.webview.postMessage(sayContentJson);
+    view?.webview.postMessage(sayContentJson);
   }
 
   async ask(content: string): Promise<AskResponse> {
@@ -99,7 +100,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
       type: "ask",
       ask: content,
     });
-    this.view?.webview.postMessage(askContentJson);
+    view?.webview.postMessage(askContentJson);
     await pWaitFor(
       () => {
         return !!codeReadingAssistant.getWebViewAskResponse();
@@ -118,16 +119,16 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
       type: "state",
       state: messages,
     });
-    this.view?.webview.postMessage(stateContentJson);
+    view?.webview.postMessage(stateContentJson);
   }
 
-  async init() {
+  private async init() {
     codeReadingAssistant = new ReadCodeAssistant(
       this.ask,
       this.say,
       this.sendState,
       this.gopls,
-      await this.getSecret("CluadeApiKey") || "key not set ..."
+      await this.getSecret("ClaudeApiKey") || "key not set ..."
     );
   }
 
@@ -156,8 +157,18 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
               this.say,
               this.sendState,
               this.gopls,
-              await this.getSecret("CluadeApiKey") || "key not set ..."
+              await this.getSecret("ClaudeApiKey") || "key not set ..."
             );
+            break;
+          case "GoplsPath":
+            const goplsPath = message.text;
+            this.updateGlobalState("goplsPath", goplsPath);
+            this.gopls = goplsPath;
+            break;
+          case "ApiKey":
+            const apiKey = message.text;
+            this.storeSecret("ClaudeApiKey", apiKey);
+            this.init();
             break;
           default:
             break;
@@ -166,13 +177,13 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
   private getHtmlContent(webview: vscode.Webview): string {
-    const stylesUri = getUri(webview, this.context.extensionUri, [
-        "webview-ui",
-        "repilot-webview",
-        "dist",
-        "assets",
-        "main.css",
-    ])
+    // const stylesUri = getUri(webview, this.context.extensionUri, [
+    //     "webview-ui",
+    //     "repilot-webview",
+    //     "dist",
+    //     "assets",
+    //     "main.css",
+    // ])
     // The JS file from the React build output
     const scriptUri = getUri(webview, this.context.extensionUri, ["webview-ui", "repilot-webview", "dist", "assets", "main.js"]);
     const nonce = getNonce();
@@ -195,32 +206,39 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     <script nonce="${nonce}" src="${scriptUri}"></script>
   </body>
 </html>
-`
+`;
   }
 
   postMessageToWebview(message: any) {
-    this.view?.webview.postMessage(message);
+    view?.webview.postMessage(message);
   }
+
+	private async updateGlobalState(key: string, value: any) {
+		await this.context.globalState.update(key, value)
+	}
 
   private async getGlobalState(key: string) {
     return await this.context.globalState.get(key);
   }
 
+	private async storeSecret(key: string, value: any) {
+		await this.context.secrets.store(key, value)
+	}
+
   private async getSecret(key: string) {
-    return process.env[key]
-    // return await this.context.secrets.get(key);
+    return await this.context.secrets.get(key);
   }
 }
 
 export function getNonce() {
-	let text = ""
-	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	let text = "";
+	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	for (let i = 0; i < 32; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length))
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
-	return text
+	return text;
 }
 
 export function getUri(webview: Webview, extensionUri: Uri, pathList: string[]) {
-	return webview.asWebviewUri(Uri.joinPath(extensionUri, ...pathList))
+	return webview.asWebviewUri(Uri.joinPath(extensionUri, ...pathList));
 }

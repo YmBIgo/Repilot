@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useEvent } from "react-use";
-import { VscodeSplitLayout } from "@vscode-elements/react-elements";
 
 import { Message } from "./type/Message";
 import ChatView from "./components/ChatView";
+import SettingView from "./components/SettingView";
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([
@@ -13,6 +13,7 @@ function App() {
       time: Date.now(),
     },
   ]);
+  const [isSettingsPage, setIsSettingsPage] = useState<boolean>(false)
   useEvent("message", (event: MessageEvent) => {
     const originalMessage =
       typeof event.data === "string" ? event.data : event.data.toString();
@@ -43,15 +44,11 @@ function App() {
     }
   });
   return (
-    <div>
-      <VscodeSplitLayout
-        initialHandlePosition="40%"
-        onVscSplitLayoutChange={(event) => {
-          console.log(event);
-        }}
-      >
-        <ChatView setMessages={setMessages} messages={messages} />
-      </VscodeSplitLayout>
+    <div style={{height: "90vh"}}>
+      { isSettingsPage
+        ? <SettingView setIsSettingsPage={setIsSettingsPage}/>
+        : <ChatView setMessages={setMessages} messages={messages} setIsSettingsPage={setIsSettingsPage}/>
+      }
     </div>
   );
 }
