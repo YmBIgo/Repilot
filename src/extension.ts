@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const openReadCodeAssistantInNewTab = () => {
 		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 		const targetCol = Math.max(lastCol + 1, 1)
-		const panel = vscode.window.createWebviewPanel(ReadCodeAssistantProvider.viewType, "Read Code Assistant", targetCol, {
+		const panel = vscode.window.createWebviewPanel(ReadCodeAssistantProvider.viewType, "repilot", targetCol, {
 			enableScripts: true,
 			retainContextWhenHidden: true,
 			localResourceRoots: [context.extensionUri],

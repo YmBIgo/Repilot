@@ -114,6 +114,14 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     return response;
   }
 
+  async sendError(content: string) {
+    const errorContentJson = JSON.stringify({
+      type: "error",
+      say: content,
+    });
+    view?.webview.postMessage(errorContentJson);
+  }
+
   sendState(messages: Message[]): void {
     const stateContentJson = JSON.stringify({
       type: "state",
@@ -126,10 +134,12 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     codeReadingAssistant = new ReadCodeAssistant(
       this.ask,
       this.say,
+      this.sendError,
       this.sendState,
       await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls",
       await this.getSecret("ClaudeApiKey") || "key not set ...",
-      await this.getGlobalState("ReportPath") as string || "~/Desktop"
+      await this.getGlobalState("ReportPath") as string || "~/Desktop",
+      await this.getGlobalState("Language") as string || "English",
     );
   }
 
@@ -156,10 +166,12 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
             codeReadingAssistant = new ReadCodeAssistant(
               this.ask,
               this.say,
+              this.sendError,
               this.sendState,
               await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls",
               await this.getSecret("ClaudeApiKey") || "key not set ...",
-              await this.getGlobalState("ReportPath") as string || "~/Desktop"
+              await this.getGlobalState("ReportPath") as string || "~/Desktop",
+              await this.getGlobalState("Language") as string || "English",
             );
             break;
           case "GoplsPath":
@@ -175,6 +187,11 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
           case "ReportPath":
             const reportPath = message.text;
             this.updateGlobalState("ReportPath", reportPath);
+            this.init();
+            break;
+          case "Language":
+            const language = message.text;
+            this.updateGlobalState("Language", language);
             this.init();
             break;
           default:

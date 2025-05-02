@@ -16,7 +16,7 @@ const SettingView: React.FC<SettingViewProps> = ({
     initReportPath
 }) => {
 
-  const [apiKey, setApiKey] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>(initApiKey);
   const updateApiKey = () => {
     vscode.postMessage({
         type: "ApiKey",
@@ -24,7 +24,7 @@ const SettingView: React.FC<SettingViewProps> = ({
     });
   };
 
-  const [goplsPath, setGoplsPath] = useState<string>("");
+  const [goplsPath, setGoplsPath] = useState<string>(initGoplPath);
   const updateGoplsPath = () => {
     vscode.postMessage({
         type: "GoplsPath",
@@ -32,13 +32,21 @@ const SettingView: React.FC<SettingViewProps> = ({
     });
   };
 
-  const [reportPath, setReportPath] = useState<string>("");
+  const [reportPath, setReportPath] = useState<string>(initReportPath);
   const updateReportPath = () => {
     vscode.postMessage({
         type: "ReportPath",
         text: reportPath
     });
   };
+
+  const [language, setLanguage] = useState<string>("");
+  const updateLanguage = () => {
+    vscode.postMessage({
+        type: "Language",
+        text: language
+    })
+  }
 
   useEffect(() => {
     setGoplsPath(initGoplPath);
@@ -100,9 +108,23 @@ const SettingView: React.FC<SettingViewProps> = ({
             Save Report path
         </VscodeButton>
         <hr/>
+        <p>Language</p>
+        <VscodeTextfield
+            value={language}
+            onChange={(e) => setLanguage((e?.target as HTMLTextAreaElement)?.value ?? "error occurs")}
+        />
         <br/>
         <VscodeButton
-            onClick={() => setIsSettingsPage(false)}
+            onClick={updateLanguage}
+        >
+            Save Report path
+        </VscodeButton>
+        <hr/>
+        <br/>
+        <VscodeButton
+            onClick={() => {
+                setIsSettingsPage(false)
+            }}
             secondary
         >
             Back to ChatView
