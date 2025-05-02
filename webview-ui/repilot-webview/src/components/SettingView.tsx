@@ -117,7 +117,7 @@ const SettingView: React.FC<SettingViewProps> = ({
         <VscodeButton
             onClick={updateLanguage}
         >
-            Save Report path
+            Save Language
         </VscodeButton>
         <hr/>
         <br/>

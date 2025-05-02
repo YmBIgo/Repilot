@@ -1,71 +1,76 @@
 # repilot README
 
-This is the README for your extension "repilot". After writing up a brief description, we recommend including the following sections.
+![repilot logo](https://repilot.s3.us-west-1.amazonaws.com/repilotLogo.png)
+
+"Repilot (***Re***ading co***pilot***)" is VS Code extension which support user's code reading for ***Golang*** using LLM(***Claude***). User can use this tool to accelerate their code reading. Since this tool only supports ***Golang***, I expect user to read CNCF's code faster using this tool.
+
+## What is difference between code reading using this agent and eye code reading
+
+- Speed Code Reading using this agent is better. I found I gain at least 2x faster for finding important functions, 3x faster for returning to original function, 5x faster for getting report summarizing code base.
+
+- Accuracy of code route Code Reading using this agent is better. When human read code, it sometimes become random walk. But since LLM knows architecture of code (like Kubernetes or argo-cd or prometheus or so on ...), LLM can pick good candidate of function in code base. So it is better for the beginner.
+
+- Ability to code jump Sometime human is better, but for most case equal. When This agent using "gopls implementation" to search code base, the accuracy of code reading is being worse, but this is not often happen.
+
+## How to use it
+
+0. Firstly goto Setting Page and set `API Key(claude)`, `gopls Path` (default /opt/homebrew/bin/gopls), `download report path` (default ~/Desktop) and `language`(default English)
+
+![Setting Page](https://repilot.s3.us-west-1.amazonaws.com/SettingPage.png)
+
+1. Go back to chat view and input `rootPath`(file path contains function you want to search), `rootFunctionName`(functionName you want to search from, it is better to contain one whole line), `Purpose`(purpose of code reading), and Tap `Start Task`.
+
+2. AI would suggest 1~5 candidates which AI thought is relavent to purpose, and you can input 0~4 index to search deeper of the code base.
+
+3. not only search deeper, you can `ask AI to search again` by 5, `show history` by 6, `get summary report` by 7, `get file that AI is reading` by 8.
+
+4. continue 2, 3 process until you think it is good.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Code reading with AI
 
-For example if there is an image subfolder under your extension project workspace:
+![Code reading with AI](https://repilot.s3.us-west-1.amazonaws.com/candidatePage.png)
 
-\!\[feature X\]\(images/feature-x.png\)
+> AI would pick 1~5 candidates of important code (and you don't have to read whole codes! ), and you can choose one candidate to search deeper recursively.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Show history and re-search previous route
+
+![Show history and re-search previous route](https://repilot.s3.us-west-1.amazonaws.com/showHistory.png)
+
+> You can see your search route and history, and you can back to previous search route at any time (so you don't have to be worried about code jump)
+
+- Get summary of code
+
+![Get summary of code](https://repilot.s3.us-west-1.amazonaws.com/reportResult.png)
+
+> You can get summary report of code base which already be read.
+
+- Check What AI is reading
+
+![Check What AI is reading](https://repilot.s3.us-west-1.amazonaws.com/openFilePage.png)
+
+> You can check what kind of file content AI is reading.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+gopls >= v0.17.1
+
+You can install gopls using `brew install gopls` for Mac User.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+I registered `repilot.openInNewTab` for opeing the main `repilot` view.
+Please use `Command + shift + p` to open command pallet and input `repilot` to start main view!
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Please report any issue on Github.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Initial release of repilot
 
 ---
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
