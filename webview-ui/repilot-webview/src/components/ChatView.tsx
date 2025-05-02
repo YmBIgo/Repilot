@@ -78,6 +78,7 @@ purpose: ${purpose}`
       setRootPath("");
       setRootFunctionName("");
       setPurpose("");
+      setPrimaryButtonText(initialConfigPrimaryButtons[0])
       return;
     }
   };
@@ -105,7 +106,8 @@ purpose: ${purpose}`
           askResponse: inputText.trim(),
         }
       );
-      setPrimaryButtonText("")
+      setPrimaryButtonText("");
+      setInputText("");
     }
   };
   const handleSendMessage = () => {
@@ -192,7 +194,7 @@ purpose: ${purpose}`
           overflow: "scroll"
         }}
       >
-        <p style={{color: "black"}}>
+        <p style={{color: "black", margin: "0"}}>
           {task}
           <hr/>
           If you have not set API KEY, Please set it
@@ -229,7 +231,8 @@ purpose: ${purpose}`
                 margin: "10px 0",
                 whiteSpace: "break-spaces",
                 width: "310px",
-                color: "black"
+                color: "black",
+                overflow: "scroll",
               }}
             >
               {message.content}
@@ -239,12 +242,13 @@ purpose: ${purpose}`
               style={{
                 display: "flex",
                 justifyContent: "flex-end",
-                backgroundColor: "white",
+                backgroundColor: "#4cc764",
+                color: "white",
                 padding: "10px",
                 margin: "10px 0",
                 whiteSpace: "break-spaces",
                 width: "310px",
-                color: "black"
+                overflow: "scroll",
               }}
             >
               {message.content}
@@ -265,8 +269,12 @@ purpose: ${purpose}`
         style={{
           position: "fixed",
           bottom: "10px",
-          left: "10px",
-          backgroundColor: "#00000070"
+          left: "0px",
+          backgroundColor: "#00000070",
+          height: "80px",
+          width: "350px",
+          paddingTop: "10px",
+          paddingLeft: "10px"
         }}
       >
         <VscodeTextfield

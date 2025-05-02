@@ -13,7 +13,11 @@ function App() {
       time: Date.now(),
     },
   ]);
-  const [isSettingsPage, setIsSettingsPage] = useState<boolean>(false)
+  const [isSettingsPage, setIsSettingsPage] = useState<boolean>(false);
+  const [initGopls, setInitGopls] = useState<string>("");
+  const [initApiKey, setInitApiKey] = useState<string>("");
+  const [initReportPath, setInitReportPath] = useState<string>("");
+
   useEvent("message", (event: MessageEvent) => {
     const originalMessage =
       typeof event.data === "string" ? event.data : event.data.toString();
@@ -39,6 +43,11 @@ function App() {
       case "state":
         setMessages(parsedMessage.state);
         break;
+      case "init":
+        setInitGopls(parsedMessage.gopls);
+        setInitApiKey(parsedMessage.apiKey);
+        setInitReportPath(parsedMessage.report);
+        break;
       default:
         break;
     }
@@ -46,7 +55,12 @@ function App() {
   return (
     <div style={{height: "90vh"}}>
       { isSettingsPage
-        ? <SettingView setIsSettingsPage={setIsSettingsPage}/>
+        ? <SettingView
+            setIsSettingsPage={setIsSettingsPage}
+            initGoplPath={initGopls}
+            initApiKey={initApiKey}
+            initReportPath={initReportPath}
+          />
         : <ChatView setMessages={setMessages} messages={messages} setIsSettingsPage={setIsSettingsPage}/>
       }
     </div>

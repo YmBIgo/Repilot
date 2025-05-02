@@ -1,13 +1,19 @@
 import { VscodeButton, VscodeTextfield } from "@vscode-elements/react-elements";
 import { vscode } from "../utils/vscode";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type SettingViewProps = {
     setIsSettingsPage: Dispatch<SetStateAction<boolean>>;
+    initGoplPath: string;
+    initApiKey: string;
+    initReportPath: string;
 }
 
 const SettingView: React.FC<SettingViewProps> = ({
-    setIsSettingsPage
+    setIsSettingsPage,
+    initGoplPath,
+    initApiKey,
+    initReportPath
 }) => {
 
   const [apiKey, setApiKey] = useState<string>("");
@@ -24,7 +30,25 @@ const SettingView: React.FC<SettingViewProps> = ({
         type: "GoplsPath",
         text: goplsPath
     });
-  }
+  };
+
+  const [reportPath, setReportPath] = useState<string>("");
+  const updateReportPath = () => {
+    vscode.postMessage({
+        type: "ReportPath",
+        text: reportPath
+    });
+  };
+
+  useEffect(() => {
+    setGoplsPath(initGoplPath);
+  }, [initGoplPath]);
+  useEffect(() => {
+    setApiKey(initApiKey);
+  }, [initApiKey])
+  useEffect(() => {
+    setReportPath(initReportPath);
+  }, [initReportPath])
 
   return (
     <div
@@ -45,6 +69,7 @@ const SettingView: React.FC<SettingViewProps> = ({
           value={apiKey}
           onChange={(e) => setApiKey((e?.target as HTMLTextAreaElement)?.value ?? "error occurs")}
         />
+        <br/>
         <VscodeButton
           onClick={updateApiKey}
         >
@@ -56,12 +81,26 @@ const SettingView: React.FC<SettingViewProps> = ({
           value={goplsPath}
           onChange={(e) => setGoplsPath((e?.target as HTMLTextAreaElement)?.value ?? "error occurs")}
         />
+        <br/>
         <VscodeButton
           onClick={updateGoplsPath}
         >
             Save Gopls Path
         </VscodeButton>
         <hr/>
+        <p>Path to Save Report</p>
+        <VscodeTextfield
+            value={reportPath}
+            onChange={(e) => setReportPath((e?.target as HTMLTextAreaElement)?.value ?? "error occurs")}
+        />
+        <br/>
+        <VscodeButton
+            onClick={updateReportPath}
+        >
+            Save Report path
+        </VscodeButton>
+        <hr/>
+        <br/>
         <VscodeButton
             onClick={() => setIsSettingsPage(false)}
             secondary

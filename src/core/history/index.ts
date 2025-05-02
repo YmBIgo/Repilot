@@ -21,7 +21,7 @@ type ChoicePosition = {
     width: number;
 }
 
-const HISTORY_PREFIX = " ".repeat(2)
+const HISTORY_PREFIX = " ".repeat(3);
 
 export class HistoryHandler {
     private rootPath: string;

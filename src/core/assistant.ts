@@ -1,5 +1,3 @@
-// kubernetes sample path /Users/coffeecup/Documents/open_source/kubernetes/kubernetes/staging/src/k8s.io/kubectl/pkg/cmd/apply/apply.go
-
 import { HistoryHandler, ProcessChoice } from "./history";
 import { AnthropicHandler } from "./llm";
 import fs from "fs/promises"
@@ -8,9 +6,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { prompt, getReportPrompt } from "./prompt/index_ja";
 import { Message, MessageType } from "./type/Message";
 import { AskResponse } from "./type/Response";
-import pWaitFor from "p-wait-for";
-
-const saveDataFolder = "~/Desktop"
 
 export class ReadCodeAssistant {
     private apiHandler: AnthropicHandler;
@@ -27,12 +22,15 @@ export class ReadCodeAssistant {
     messages: Message[];
     private askResponse?: string;
 
+    private saveReportFolder: string;
+
     constructor(
         ask: (content: string) => Promise<AskResponse>,
         say: (content: string) => void,
         sendState: (messages: Message[]) => void,
         goplsPath: string,
-        apiKey: string
+        apiKey: string,
+        saveReportFolder: string,
     ) {
         this.apiHandler = new AnthropicHandler(apiKey);
         this.messages = [];
@@ -40,15 +38,16 @@ export class ReadCodeAssistant {
             const m = this.addMessages(content, "say");
             sendState(m);
             say(content);
-        }
+        };
         this.askSocket = (content: string) => {
             const m = this.addMessages(content, "ask");
             sendState(m);
             return ask(content);
-        }
+        };
         this.sendState = sendState;
         this.goplsPath = goplsPath;
         this.askResponse = undefined;
+        this.saveReportFolder = saveReportFolder || "~/Desktop";
     }
 
     initializeAndRun(rootPath: string, rootFunctionName: string, purpose: string) {
@@ -182,12 +181,13 @@ ${functionContent}
                 continue;
             }
             if (resultNumber === 8) {
-                this.saySocket("\n\n----------" + functionContent + "----------\n\n");
+                this.saySocket("\n\n----------\n" + functionContent + "\n----------\n\n");
                 continue;
             }
         }
         if (!parsedContent[resultNumber]) return;
         this.historyHandler?.addHistory(newHistoryChoices);
+        this.saySocket(`Gopls is Searching for "${parsedContent[resultNumber]["function"]}"\n`)
         const goplsHanlder = new GoplsHandler(currentPath, this.goplsPath);
         await goplsHanlder.readFile();
         const file = await goplsHanlder.searchNextFunction(
@@ -225,8 +225,8 @@ ${result}`;
         if (type !== "text") return;
         const res = response.content[0].text + "\n\n - Details \n\n" + result;
         const fileName = `report_${Date.now()}.txt`;
-        await fs.writeFile(`${saveDataFolder}/${fileName}`, res);
-        this.saySocket(`Generate Report successfully @${saveDataFolder}/${fileName}`);
+        await fs.writeFile(`${this.saveReportFolder}/${fileName}`, res);
+        this.saySocket(`Generate Report successfully @${this.saveReportFolder}/${fileName}`);
     }
 
     handleWebViewAskResponse(askResponse: string) {

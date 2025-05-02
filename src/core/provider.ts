@@ -11,7 +11,6 @@ let view: vscode.WebviewView | vscode.WebviewPanel;
 
 export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "repilot.SidebarProvider";
-  private gopls: string = "/opt/homebrew/bin/gopls";
   private disposables: vscode.Disposable[] = [];
 
   constructor(
@@ -44,9 +43,10 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     };
     webviewView.webview.html = this.getHtmlContent(webviewView.webview);
 
-    this.gopls = await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls";
     this.init();
     this.setWebviewMessageListener(webviewView.webview);
+    // In order to load variables, wait for 4 second
+    setTimeout(() => this.sendInitSettingInfoToWebView(), 4000);
 
 		// Listen for when the panel becomes visible
 		// https://github.com/microsoft/vscode-discussions/discussions/840
@@ -127,8 +127,9 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
       this.ask,
       this.say,
       this.sendState,
-      this.gopls,
-      await this.getSecret("ClaudeApiKey") || "key not set ..."
+      await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls",
+      await this.getSecret("ClaudeApiKey") || "key not set ...",
+      await this.getGlobalState("ReportPath") as string || "~/Desktop"
     );
   }
 
@@ -156,24 +157,37 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
               this.ask,
               this.say,
               this.sendState,
-              this.gopls,
-              await this.getSecret("ClaudeApiKey") || "key not set ..."
+              await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls",
+              await this.getSecret("ClaudeApiKey") || "key not set ...",
+              await this.getGlobalState("ReportPath") as string || "~/Desktop"
             );
             break;
           case "GoplsPath":
             const goplsPath = message.text;
             this.updateGlobalState("goplsPath", goplsPath);
-            this.gopls = goplsPath;
+            this.init();
             break;
           case "ApiKey":
             const apiKey = message.text;
             this.storeSecret("ClaudeApiKey", apiKey);
             this.init();
             break;
+          case "ReportPath":
+            const reportPath = message.text;
+            this.updateGlobalState("ReportPath", reportPath);
+            this.init();
+            break;
           default:
             break;
         }
     });
+  }
+
+  private async sendInitSettingInfoToWebView() {
+    const gopls = await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls";
+    const apiKey = await this.getSecret("ClaudeApiKey") || "";
+    const report = await this.getGlobalState("ReportPath") as string || "~/Desktop";
+    view.webview.postMessage({type: "init", gopls, apiKey, report});
   }
 
   private getHtmlContent(webview: vscode.Webview): string {
@@ -214,7 +228,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
 	private async updateGlobalState(key: string, value: any) {
-		await this.context.globalState.update(key, value)
+		await this.context.globalState.update(key, value);
 	}
 
   private async getGlobalState(key: string) {
@@ -222,7 +236,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
 	private async storeSecret(key: string, value: any) {
-		await this.context.secrets.store(key, value)
+		await this.context.secrets.store(key, value);
 	}
 
   private async getSecret(key: string) {
