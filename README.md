@@ -14,13 +14,13 @@
 
 ## How to use it
 
-0. Firstly goto Setting Page and set `API Key(claude)`, `gopls Path` (default /opt/homebrew/bin/gopls), `download report path` (default ~/Desktop) and `language`(default English)
+0. Firstly goto Setting Page and set `API Key(claude)`, `gopls Path` (default /opt/homebrew/bin/gopls), `download report path` (default \~/Desktop) and `language`(default English)
 
 ![Setting Page](https://repilot.s3.us-west-1.amazonaws.com/SettingPage.png)
 
 1. Go back to chat view and input `rootPath`(file path contains function you want to search), `rootFunctionName`(functionName you want to search from, it is better to contain one whole line), `Purpose`(purpose of code reading), and Tap `Start Task`.
 
-2. AI would suggest 1~5 candidates which AI thought is relavent to purpose, and you can input 0~4 index to search deeper of the code base.
+2. AI would suggest 1〜5 candidates which AI thought is relavent to purpose, and you can input 0〜4 index to search deeper of the code base.
 
 3. not only search deeper, you can `ask AI to search again` by 5, `show history` by 6, `get summary report` by 7, `get file that AI is reading` by 8.
 
@@ -32,7 +32,7 @@
 
 ![Code reading with AI](https://repilot.s3.us-west-1.amazonaws.com/candidatePage.png)
 
-> AI would pick 1~5 candidates of important code (and you don't have to read whole codes! ), and you can choose one candidate to search deeper recursively.
+> AI would pick 1〜5 candidates of important code (and you don't have to read whole codes! ), and you can choose one candidate to search deeper recursively.
 
 - Show history and re-search previous route
 
