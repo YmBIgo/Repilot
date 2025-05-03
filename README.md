@@ -95,6 +95,6 @@ fix small bugs (bugs when retry and search history hash)
 
 ---
 
-### 1.0.2
+### 1.0.2 ~ 1.0.3
 
 fix installation bug
