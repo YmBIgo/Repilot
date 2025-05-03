@@ -6,11 +6,17 @@
 
 ## What is difference between code reading using this agent and eye code reading
 
-- Speed Code Reading using this agent is better. I found I gain at least 2x faster for finding important functions, 3x faster for returning to original function, 5x faster for getting report summarizing code base.
+- Speed :
 
-- Accuracy of code route Code Reading using this agent is better. When human read code, it sometimes become random walk. But since LLM knows architecture of code (like Kubernetes or argo-cd or prometheus or so on ...), LLM can pick good candidate of function in code base. So it is better for the beginner.
+Code Reading using this agent is better. I found I gain at least 2x faster for finding important functions, 3x faster for returning to original function, 5x faster for getting report summarizing code base.
 
-- Ability to code jump Sometime human is better, but for most case equal. When This agent using "gopls implementation" to search code base, the accuracy of code reading is being worse, but this is not often happen.
+- Accuracy of code route :
+
+Code Reading using this agent is better. When human read code, it sometimes become random walk. But since LLM knows architecture of code (like Kubernetes or argo-cd or prometheus or so on ...), LLM can pick good candidate of function in code base. So it is better for the beginner.
+
+- Ability to code jump :
+
+Sometime human is better, but for most case equal. When This agent using "gopls implementation" to search code base, the accuracy of code reading is being worse, but this is not often happen.
 
 ## How to use it
 
@@ -58,9 +64,13 @@
 
 ## Requirements
 
-gopls >= v0.17.1
+- gopls >= v0.17.1
 
 You can install gopls using `brew install gopls` for Mac User.
+
+- Claude API
+
+We use "claude-3-5-sonnet-20241022" as AI model, so please prepare Claude API to use it.
 
 ## Extension Settings
 
@@ -82,3 +92,9 @@ Initial release of repilot
 ### 1.0.1
 
 fix small bugs (bugs when retry and search history hash)
+
+---
+
+### 1.0.2
+
+fix installation bug

@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.2]
+
+- fix installation bug
+
 ## [1.0.1]
 
 - fix small bugs
