@@ -7,16 +7,18 @@ type SettingViewProps = {
     initGoplPath: string;
     initApiKey: string;
     initReportPath: string;
+    initLanguage: string;
 }
 
 const SettingView: React.FC<SettingViewProps> = ({
     setIsSettingsPage,
     initGoplPath,
     initApiKey,
-    initReportPath
+    initReportPath,
+    initLanguage
 }) => {
 
-  const [apiKey, setApiKey] = useState<string>(initApiKey);
+  const [apiKey, setApiKey] = useState<string>("");
   const updateApiKey = () => {
     vscode.postMessage({
         type: "ApiKey",
@@ -24,7 +26,7 @@ const SettingView: React.FC<SettingViewProps> = ({
     });
   };
 
-  const [goplsPath, setGoplsPath] = useState<string>(initGoplPath);
+  const [goplsPath, setGoplsPath] = useState<string>("");
   const updateGoplsPath = () => {
     vscode.postMessage({
         type: "GoplsPath",
@@ -32,7 +34,7 @@ const SettingView: React.FC<SettingViewProps> = ({
     });
   };
 
-  const [reportPath, setReportPath] = useState<string>(initReportPath);
+  const [reportPath, setReportPath] = useState<string>("");
   const updateReportPath = () => {
     vscode.postMessage({
         type: "ReportPath",
@@ -49,6 +51,12 @@ const SettingView: React.FC<SettingViewProps> = ({
   }
 
   useEffect(() => {
+    vscode.postMessage({
+      type: "InitSettings",
+    });
+  }, [])
+
+  useEffect(() => {
     setGoplsPath(initGoplPath);
   }, [initGoplPath]);
   useEffect(() => {
@@ -57,6 +65,9 @@ const SettingView: React.FC<SettingViewProps> = ({
   useEffect(() => {
     setReportPath(initReportPath);
   }, [initReportPath])
+  useEffect(() => {
+    setLanguage(initLanguage);
+  }, [initLanguage])
 
   return (
     <div

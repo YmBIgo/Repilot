@@ -4,6 +4,7 @@
   "description": "Repilot, First Read Code Agent using LLM",
   "version": "0.0.1",
   "type": "module",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.99.3"
   },
@@ -12,6 +13,10 @@
   },
   "license": "MIT",
   "publisher": "coffeecupjapan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YmBIgo/Repilot"
+  },
   "categories": [
     "Other"
   ],
@@ -70,6 +75,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.1",
+    "ajv": "^8.17.1",
     "execa": "^9.5.2",
     "p-wait-for": "^5.0.2"
   }

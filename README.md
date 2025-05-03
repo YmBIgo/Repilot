@@ -14,6 +14,10 @@
 
 ## How to use it
 
+- Demo
+
+[![Repilot Demo Movie](https://repilot.s3.us-west-1.amazonaws.com/repilot_youtube_thumbnail.png)](https://youtu.be/SXU8dG6u330)
+
 0. Firstly goto Setting Page and set `API Key(claude)`, `gopls Path` (default /opt/homebrew/bin/gopls), `download report path` (default \~/Desktop) and `language`(default English)
 
 ![Setting Page](https://repilot.s3.us-west-1.amazonaws.com/SettingPage.png)
@@ -74,3 +78,7 @@ Please report any issue on Github.
 Initial release of repilot
 
 ---
+
+### 1.0.1
+
+fix small bugs (bugs when retry and search history hash)

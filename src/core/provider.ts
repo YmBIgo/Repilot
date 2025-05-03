@@ -45,8 +45,6 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
 
     this.init();
     this.setWebviewMessageListener(webviewView.webview);
-    // In order to load variables, wait for 4 second
-    setTimeout(() => this.sendInitSettingInfoToWebView(), 4000);
 
 		// Listen for when the panel becomes visible
 		// https://github.com/microsoft/vscode-discussions/discussions/840
@@ -174,6 +172,9 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
               await this.getGlobalState("Language") as string || "English",
             );
             break;
+          case "InitSettings":
+            this.sendInitSettingInfoToWebView();
+            break;
           case "GoplsPath":
             const goplsPath = message.text;
             this.updateGlobalState("goplsPath", goplsPath);
@@ -204,7 +205,8 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     const gopls = await this.getGlobalState("goplsPath") as string ?? "/opt/homebrew/bin/gopls";
     const apiKey = await this.getSecret("ClaudeApiKey") || "";
     const report = await this.getGlobalState("ReportPath") as string || "~/Desktop";
-    view.webview.postMessage({type: "init", gopls, apiKey, report});
+    const language = await this.getGlobalState("Language") as string|| "English"
+    view.webview.postMessage(JSON.stringify({type: "init", gopls, apiKey, report, language}));
   }
 
   private getHtmlContent(webview: vscode.Webview): string {

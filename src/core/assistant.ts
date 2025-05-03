@@ -176,9 +176,10 @@ ${functionContent}
             } as ProcessChoice);
         })
         let resultNumber = 0;
+        let result: AskResponse | null = null;
         this.saySocket(`${askQuestion}`);
         for(;;) {
-            const result = await this.askSocket(`Please Input Index which you want to see details
+            result = await this.askSocket(`Please Input Index which you want to see details
 ※：enter 5 to retry. enter 6 to show history. enter 7 to get report. enter 8 to show current file.
 ※：If you enter string, it is recognized as hash value to search history.
 `);
@@ -187,15 +188,15 @@ ${functionContent}
             const newMessages = this.addMessages(`User Enter ${result.ask}`, "user")
             this.sendState(newMessages)
             if (isNaN(resultNumber)) {
-                this.runHistoryPoint(result.ask);
-                return;
+                // this.runHistoryPoint(result.ask);
+                break;
             }
             if (resultNumber >= 0 && resultNumber < 5) {
                 break;
             }
             if (resultNumber === 5) {
-                this.runTask(currentPath, functionContent);
-                return;
+                // this.runTask(currentPath, functionContent);
+                break;
             }
             if (resultNumber === 6) {
                 const historyTree = this.historyHandler?.showHistory();
@@ -232,6 +233,14 @@ ${functionContent}
                     continue;
                 }
             }
+        }
+        if (isNaN(resultNumber)) {
+            this.runHistoryPoint(result.ask);
+            return;
+        }
+        if (resultNumber === 5) {
+            this.runTask(currentPath, functionContent);
+            return;
         }
         if (!parsedContent[resultNumber]) {
             this.sendErrorSocket(`Your Choise ${resultNumber} is not valid choice.`)

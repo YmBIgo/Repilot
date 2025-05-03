@@ -17,6 +17,7 @@ function App() {
   const [initGopls, setInitGopls] = useState<string>("");
   const [initApiKey, setInitApiKey] = useState<string>("");
   const [initReportPath, setInitReportPath] = useState<string>("");
+  const [initLanguage, setInitLanguage] = useState<string>("");
 
   useEvent("message", (event: MessageEvent) => {
     const originalMessage =
@@ -47,6 +48,7 @@ function App() {
         setInitGopls(parsedMessage.gopls);
         setInitApiKey(parsedMessage.apiKey);
         setInitReportPath(parsedMessage.report);
+        setInitLanguage(parsedMessage.language)
         break;
       default:
         break;
@@ -60,6 +62,7 @@ function App() {
             initGoplPath={initGopls}
             initApiKey={initApiKey}
             initReportPath={initReportPath}
+            initLanguage={initLanguage}
           />
         : <ChatView setMessages={setMessages} messages={messages} setIsSettingsPage={setIsSettingsPage}/>
       }
