@@ -26,7 +26,7 @@
     "onCommand:repilot.popoutButtonTapped",
     "onCommand:repilot.openInNewTab"
   ],
-  "main": "./dist/extension.cjs",
+  "main": "./dist/extension.cjs.js",
   "contributes": {
     "commands": [
       {
