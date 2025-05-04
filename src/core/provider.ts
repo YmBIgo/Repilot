@@ -6,7 +6,7 @@ import { Message } from "./type/Message";
 import { ReadCodeAssistant } from "./assistant";
 import { AskResponse } from "./type/Response";
 
-let codeReadingAssistant: ReadCodeAssistant;
+let codeReadingAssistant: ReadCodeAssistant | null;
 let view: vscode.WebviewView | vscode.WebviewPanel;
 
 export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
@@ -93,7 +93,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
   async ask(content: string): Promise<AskResponse> {
-    codeReadingAssistant.clearWebViewAskResponse();
+    codeReadingAssistant?.clearWebViewAskResponse();
     const askContentJson = JSON.stringify({
       type: "ask",
       ask: content,
@@ -101,7 +101,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     view?.webview.postMessage(askContentJson);
     await pWaitFor(
       () => {
-        return !!codeReadingAssistant.getWebViewAskResponse();
+        return !!codeReadingAssistant?.getWebViewAskResponse();
       },
       { interval: 500 }
     );
@@ -129,6 +129,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
   private async init() {
+    codeReadingAssistant = null;
     codeReadingAssistant = new ReadCodeAssistant(
       this.ask,
       this.say,
@@ -149,7 +150,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
             const rootPath = message.rootPath ?? "";
             const rootFunctionName = message.rootFunctionName ?? "";
             const purpose = message.purpose ?? "";
-            codeReadingAssistant.initializeAndRun(
+            codeReadingAssistant?.initializeAndRun(
               rootPath,
               rootFunctionName,
               purpose
@@ -158,9 +159,10 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
           case "Ask":
             const askResponse = message.askResponse;
             console.log("receive message", askResponse);
-            codeReadingAssistant.handleWebViewAskResponse(askResponse);
+            codeReadingAssistant?.handleWebViewAskResponse(askResponse);
             break;
           case "Reset":
+            codeReadingAssistant = null;
             codeReadingAssistant = new ReadCodeAssistant(
               this.ask,
               this.say,
