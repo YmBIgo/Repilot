@@ -129,6 +129,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
   }
 
   private async init() {
+    codeReadingAssistant?.doGC();
     codeReadingAssistant = null;
     codeReadingAssistant = new ReadCodeAssistant(
       this.ask,
@@ -162,6 +163,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
             codeReadingAssistant?.handleWebViewAskResponse(askResponse);
             break;
           case "Reset":
+            codeReadingAssistant?.doGC();
             codeReadingAssistant = null;
             codeReadingAssistant = new ReadCodeAssistant(
               this.ask,

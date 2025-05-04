@@ -298,6 +298,17 @@ ${result}`;
         await fs.writeFile(`${this.saveReportFolder}/${fileName}`, res);
         this.saySocket(`Generate Report successfully @${this.saveReportFolder}/${fileName}`);
     }
+    doGC() {
+        this.goplsPath = "";
+        this.rootPath = "";
+        this.rootFunctionName = "";
+        this.saySocket = () => {};
+        this.askSocket = async(content: string) => {return {} as AskResponse};
+        this.messages = [];
+        this.sendState = () => {};
+        this.historyHandler = null;
+        this.apiHandler = new AnthropicHandler("API Key not set...")
+    }
 
     handleWebViewAskResponse(askResponse: string) {
         this.askResponse = askResponse;

@@ -30,13 +30,13 @@ export function activate(context: vscode.ExtensionContext) {
 	// 	})
 	// );
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("repilot.settingsButtonTapped", () => {
-			//const message = "claude-dev.settingsButtonTapped!"
-			//vscode.window.showInformationMessage(message)
-			tabProvider.postMessageToWebview({ type: "action", action: "settingsButtonTapped" })
-		})
-	);
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("repilot.settingsButtonTapped", () => {
+	// 		//const message = "claude-dev.settingsButtonTapped!"
+	// 		//vscode.window.showInformationMessage(message)
+	// 		tabProvider.postMessageToWebview({ type: "action", action: "settingsButtonTapped" })
+	// 	})
+	// );
 
 	const openReadCodeAssistantInNewTab = () => {
 		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
@@ -54,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	};
 
-	context.subscriptions.push(vscode.commands.registerCommand("repilot.popoutButtonTapped", openReadCodeAssistantInNewTab))
+	// context.subscriptions.push(vscode.commands.registerCommand("repilot.popoutButtonTapped", openReadCodeAssistantInNewTab))
 	context.subscriptions.push(vscode.commands.registerCommand("repilot.openInNewTab", openReadCodeAssistantInNewTab))
 
 	// The command has been defined in the package.json file

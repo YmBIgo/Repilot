@@ -101,6 +101,6 @@ fix installation bug
 
 ---
 
-### 1.0.6
+### 1.0.6 ~ 1.0.7
 
 fix GC problem
