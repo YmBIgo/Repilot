@@ -118,3 +118,9 @@ add mermaid
 ### 1.0.9
 
 fix mermaid bug
+
+---
+
+### 1.0.10
+
+fix copy-paste bug

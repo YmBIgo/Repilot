@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.10]
+
+- fix copy-paste bug
+
 ## [1.0.9]
 
 - fix mermaid bug
