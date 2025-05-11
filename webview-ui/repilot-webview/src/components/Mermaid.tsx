@@ -1,6 +1,6 @@
 import { VscodeButton } from "@vscode-elements/react-elements";
 import mermaid from "mermaid";
-import {copy} from "copy-paste";
+import {copy} from "clipboard";
 import React from "react";
 
 type Props = {
