@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { HistoryHandler, ProcessChoice } from "./history";
 import { AnthropicHandler } from "./llm";
 import { GoplsHandler, getFunctionContentFromFile } from "./lsp";
-import { prompt, getReportPrompt } from "./prompt/index";
+import { prompt, getReportPrompt, getMermaidPrompt } from "./prompt/index";
 import { Message, MessageType } from "./type/Message";
 import { AskResponse } from "./type/Response";
 
@@ -20,6 +20,7 @@ export class ReadCodeAssistant {
     private saySocket: (content: string) => void;
     private sendErrorSocket: (content: string) => void;
     private askSocket: (content: string) => Promise<AskResponse>;
+    private mermaidSocket: (content: string) => void;
     private sendState: (messages: Message[]) => void;
 
     messages: Message[];
@@ -53,6 +54,10 @@ export class ReadCodeAssistant {
             const m = this.addMessages(content, "error");
             sendState(m);
             sendError(content);
+        };
+        this.mermaidSocket = (content: string) => {
+            const m = this.addMessages(content, "mermaid");
+            sendState(m);
         };
         this.sendState = sendState;
         this.goplsPath = goplsPath;
@@ -179,9 +184,13 @@ ${functionContent}
         let result: AskResponse | null = null;
         this.saySocket(`${askQuestion}`);
         for(;;) {
-            result = await this.askSocket(`Please Input Index which you want to see details
-※：enter 5 to retry. enter 6 to show history. enter 7 to get report. enter 8 to show current file.
-※：If you enter string, it is recognized as hash value to search history.
+            result = await this.askSocket(`Please Input Index which you want to see details.
+enter 5 to retry.
+enter 6 to show history.
+enter 7 to get report.
+enter 8 to show current file.
+enter 9 to get mermaid diagram of the current function of method.
+※：If you enter string, it is recognized as hash value to search previous history.
 `);
             console.log("result : ", result)
             resultNumber = Number(result.ask);
@@ -232,6 +241,9 @@ ${functionContent}
                     console.warn(e);
                     continue;
                 }
+            } else if (resultNumber === 9) {
+                await this.getMermaid(functionContent);
+                continue;
             }
         }
         if (isNaN(resultNumber)) {
@@ -297,6 +309,21 @@ ${result}`;
         const fileName = `report_${Date.now()}.txt`;
         await fs.writeFile(`${this.saveReportFolder}/${fileName}`, res);
         this.saySocket(`Generate Report successfully @${this.saveReportFolder}/${fileName}`);
+    }
+    private async getMermaid(functionContent: string) {
+        this.saySocket(`Start generating Mermaid diagram of the current function.`);
+        const userPrompt = `\`\`\`content
+${functionContent}
+\`\`\``;
+        const history: Anthropic.MessageParam[] = [{role: "user", content: userPrompt}];
+        const response = await this.apiHandler.createMessage(getMermaidPrompt(this.language), history);
+        const type = response.content[0].type;
+        if (type !== "text") {
+            this.sendErrorSocket(`API Error`);
+            return;
+        }
+        this.saySocket(`Generate Mermaid diagram. Done!`);
+        this.mermaidSocket(response.content[0].text);
     }
     doGC() {
         this.goplsPath = "";

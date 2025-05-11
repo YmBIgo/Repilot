@@ -5,6 +5,7 @@ import { VscodeIcon } from "@vscode-elements/react-elements";
 
 import { Message } from "../type/Message";
 import { vscode } from "../utils/vscode";
+import { Mermaid } from "./Mermaid";
 
 type ChatViewType = {
   messages: Message[];
@@ -44,7 +45,7 @@ purpose: ${purpose}`
         ...messages,
         {
           type: "say",
-          content: "Please input rootPath you want to search.",
+          content: "Please input rootPath you want to search (Please input absolute path...).",
           time: Date.now(),
         },
       ]);
@@ -72,7 +73,7 @@ purpose: ${purpose}`
       setMessages([
         {
           type: "say",
-          content: "Please input rootPath you want to search.",
+          content: "Please input rootPath you want to search. (Please input absolute path...)",
           time: Date.now(),
         },
       ]);
@@ -212,7 +213,7 @@ purpose: ${purpose}`
               setMessages([
                 {
                   type: "say",
-                  content: "Please input rootPath you want to search.",
+                  content: "Please input rootPath you want to search. (Please input absolute path...)",
                   time: Date.now(),
                 },
               ]);
@@ -273,6 +274,19 @@ purpose: ${purpose}`
               Error Occurs... Please try again...
               <br />
               Reason : {message.content}
+            </div>
+          ) : message.type === "mermaid" ? (
+            <div
+              style={{
+                padding: "10px",
+                margin: "10px 0",
+                width: "310px",
+                overflow: "scroll"
+              }}
+            >
+              <Mermaid
+                code={message.content}
+              />
             </div>
           ) : (
             <div

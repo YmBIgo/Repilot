@@ -1,4 +1,4 @@
-export type MessageType = "say" | "ask" | "user" | "error"
+export type MessageType = "say" | "ask" | "user" | "error" | "mermaid"
 export type Message = {
     type: MessageType;
     content: string;
