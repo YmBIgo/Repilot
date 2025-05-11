@@ -2,7 +2,7 @@
   "name": "repilot",
   "displayName": "repilot",
   "description": "Repilot, First Read Code Agent using LLM",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "type": "commonjs",
   "icon": "icon.png",
   "engines": {
