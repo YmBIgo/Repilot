@@ -64,6 +64,8 @@ Sometime human is better, but for most case equal. When This agent using "gopls 
 
 ## Requirements
 
+- VSCode >= 1.99.3
+
 - gopls >= v0.17.1
 
 You can install gopls using `brew install gopls` for Mac User.
@@ -110,3 +112,9 @@ fix GC problem
 ### 1.0.8
 
 add mermaid
+
+---
+
+### 1.0.9
+
+fix mermaid bug

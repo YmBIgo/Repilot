@@ -58,7 +58,7 @@ purpose: ${purpose}`
         ...messages,
         {
           type: "say",
-          content: "Please input rootFunctionName you want to search.",
+          content: "Please input rootFunctionName you want to search. ( If you think something is wrong, please input one line not function name. )",
           time: Date.now(),
         },
       ]);
@@ -118,7 +118,7 @@ purpose: ${purpose}`
           ...messages,
           {
             type: "say",
-            content: "Please input rootFunctionName you want to search.",
+            content: "Please input rootFunctionName you want to search. ( If you think something is wrong, please input one line not function name. )",
             time: Date.now(),
           },
         ]);

@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.9]
+
+- fix mermaid bug
+
 ## [1.0.8]
 
 - add mermaid

@@ -9,7 +9,7 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([
     {
       type: "say",
-      content: "Please input rootPath you want to search.",
+      content: "Please input rootPath you want to search. (Please input absolute path...)",
       time: Date.now(),
     },
   ]);

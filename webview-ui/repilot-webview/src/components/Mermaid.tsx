@@ -1,5 +1,6 @@
 import { VscodeButton } from "@vscode-elements/react-elements";
 import mermaid from "mermaid";
+import {copy} from "copy-paste";
 import React from "react";
 
 type Props = {
@@ -25,7 +26,7 @@ export const Mermaid: React.FC<Props> = (props) => {
   }, [code]);
 
   const copyToClipboard = async () => {
-    await global.navigator.clipboard.writeText(code);
+    copy(code)
   };
 
   React.useEffect(() => {
