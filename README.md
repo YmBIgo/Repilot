@@ -124,3 +124,9 @@ fix mermaid bug
 ### 1.0.10
 
 fix copy-paste bug
+
+---
+
+### 1.0.11
+
+add bug finder

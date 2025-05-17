@@ -235,7 +235,7 @@ export class ReadCodeAssistantProvider implements vscode.WebviewViewProvider {
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}';">
-    <title>Claude Dev</title>
+    <title>Repilot</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { HistoryHandler, ProcessChoice } from "./history";
 import { AnthropicHandler } from "./llm";
 import { GoplsHandler, getFunctionContentFromFile } from "./lsp";
-import { prompt, getReportPrompt, getMermaidPrompt } from "./prompt/index";
+import { prompt, getReportPrompt, getMermaidPrompt, getBugReportPrompt } from "./prompt/index";
 import { Message, MessageType } from "./type/Message";
 import { AskResponse } from "./type/Response";
 
@@ -190,6 +190,7 @@ enter 6 to show history.
 enter 7 to get report.
 enter 8 to show current file.
 enter 9 to get mermaid diagram of the current function of method.
+enter 10 to get suspicious bugs.
 ※：If you enter string, it is recognized as hash value to search previous history.
 `);
             console.log("result : ", result)
@@ -243,6 +244,9 @@ enter 9 to get mermaid diagram of the current function of method.
                 }
             } else if (resultNumber === 9) {
                 await this.getMermaid(functionContent);
+                continue;
+            } else if (resultNumber === 10) {
+                await this.getBugsReport();
                 continue;
             }
         }
@@ -324,6 +328,30 @@ ${functionContent}
         }
         this.saySocket(`Generate Mermaid diagram. Done!`);
         this.mermaidSocket(response.content[0].text);
+    }
+    private async getBugsReport() {
+        const description = await this.askSocket(`If you have suspicious behavior related to code you are reading, please descibe it \n(If you don't have just enter "no")`);
+        const r = this.historyHandler?.traceFunctionContent()
+        if (!r) {
+            this.sendErrorSocket(`Fail to get report...`);
+            return;
+        }
+        const [result, functionResult] = r;
+        this.saySocket(`Start finding bugs related to "${functionResult}"`);
+        const userPrompt = `<functions or methods>
+${result}
+<the suspicious behavior (optional)>
+${description ? description : "not provided..."}
+`;
+        const history: Anthropic.MessageParam[] = [{role: "user", content: userPrompt}];
+        const response = await this.apiHandler.createMessage(getBugReportPrompt(this.language), history);
+        const type = response.content[0].type;
+        if (type !== "text") {
+            this.sendErrorSocket(`API Error`);
+            return;
+        }
+        this.saySocket('Generate Bugs Report. Done!');
+        this.saySocket(response.content[0].text);
     }
     doGC() {
         this.goplsPath = "";

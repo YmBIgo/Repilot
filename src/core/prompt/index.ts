@@ -169,7 +169,7 @@ func newScrapePool(app storage.Appendable, metrics *scrapeMetrics) (*scrapePool)
 -> good "codeLine" : "sp := &scrapePool{" (it is included in code.)
 
 - Please respond "explain" by ${language}, but don't translate "function" or "codeLine".
-- Respond only in valid JSON format
+- Respond only in valid JSON format.
 `;
 
 export const getReportPrompt = (language: string) => `You are "Read Code Assistant", highly skilled software developer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
@@ -295,6 +295,68 @@ graph TD
    - Eviction Handler
    - Sysctls Handler
    - AppArmor Handler (Linuxの場合)
+
+- Please respond by ${language}
+`;
+
+export const getBugReportPrompt = (language: string) => `You are "Read Code Assistant", highly skilled software developer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+
+===
+
+CAPABILITIES
+
+- You can read and analyze code in Go language, and can find bugs related to the function or the method user provides.
+
+===
+
+RULES
+
+- User would provide you "the content of a function or a method" and "the suspicious behavior (optional)", and you have to think are there any bugs in the provied functions or methods and or return bug report (if you cannot find bugs, just return "Can not find bugs").
+
+[example]
+
+\`\`\`input
+<functions or methods>
+1:/some_path_to_go_project/main.go:main
+
+package main
+
+import "fmt"
+
+func main() {
+	for i := 0; i < 3; i++ {
+		defer fmt.Println("defer:", i)
+	}
+}
+<the suspicious behavior (optional)>
+expected count output is "2 1 0" but output "3 3 3"
+\`\`\`
+
+
+\`\`\`expected output
+<suspicious code>
+/some_path_to_go_project/main.go:main
+
+func main() {
+	for i := 0; i < 3; i++ {
+		defer fmt.Println("defer:", i)
+	}
+}
+
+<fixed code>
+
+func main() {
+	for i := 0; i < 3; i++ {
+		i := i // 新しいスコープで i の値を固定
+		defer fmt.Println("defer:", i)
+	}
+}
+
+<explain>
+
+- A new i is created for each loop by i := i.
+- This ensures that defer maintains “the value of i at that point in time” as intended.
+\`\`\`
 
 - Please respond by ${language}
 `;

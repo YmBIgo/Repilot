@@ -274,6 +274,8 @@ purpose: ${purpose}`
               Error Occurs... Please try again...
               <br />
               Reason : {message.content}
+              <br />
+              Please press "here" above to reset...
             </div>
           ) : message.type === "mermaid" ? (
             <div
